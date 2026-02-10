@@ -1,7 +1,7 @@
 "use strict";
 
 const pages = new Map([
-    ["work", loadWorkPage],
+    ["projects", loadProjectsPage],
     ["about", loadAboutPage],
 ]);
 const defaultPage = pages.keys().next().value;
@@ -9,7 +9,7 @@ const contentDiv = document.getElementById("content");
 
 window.onload = function () {
     // generate menu bar
-    const menuBar = document.getElementById("menu-bar");
+    const menuBar = document.getElementById("menuBar");
     for (const page of pages.keys()) {
         const menuBtn = document.createElement("li");
         const menuLink = document.createElement("a");
@@ -28,20 +28,27 @@ function loadContent() {
     contentDiv.innerHTML = ""; // remove old content
 
     let pageKey = location.hash.slice(1);
-
     if (!location.hash || !pages.has(pageKey)) {
         location.hash = defaultPage;
         pageKey = defaultPage;
     }
 
-    const loader = pages.get(pageKey);
-    loader(); // load new content
+    fetch("./".concat(pageKey, ".html"))
+        .then(response => response.text())
+        .then(html => {
+            contentDiv.innerHTML = html;
+            pages.get(pageKey)(); // load new content
+        })
+        .catch(error => {
+            contentDiv.innerText = "ERROR LOADING PAGE :(";
+            console.error(error);
+        });
 }
 
-function loadWorkPage() {
-    contentDiv.innerText = "Here will be a list of my projects :D";
+function loadProjectsPage() {
+    console.log("projects page loaded :D");
 }
 
 function loadAboutPage() {
-    contentDiv.innerText = "Here will be some info about me :D";
+    console.log("about page loaded :D");
 }
