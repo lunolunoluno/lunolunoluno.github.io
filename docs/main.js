@@ -20,11 +20,11 @@ window.onload = function () {
     }
 
     // load content
-    loadContent();
+    loadContentFromHash();
 }
-window.addEventListener("hashchange", loadContent);
+window.addEventListener("hashchange", loadContentFromHash);
 
-function loadContent() {
+function loadContentFromHash() {
     contentDiv.innerHTML = ""; // remove old content
 
     let pageKey = location.hash.slice(1);
@@ -32,7 +32,11 @@ function loadContent() {
         location.hash = defaultPage;
         pageKey = defaultPage;
     }
+    // load content
+    loadContent(pageKey);
+}
 
+function loadContent(pageKey){
     fetch("./".concat(pageKey, ".html"))
         .then(response => response.text())
         .then(html => {
@@ -46,7 +50,44 @@ function loadContent() {
 }
 
 function loadProjectsPage() {
-    console.log("projects page loaded :D");
+    const projectsList = document.getElementById("projectsList");
+    fetch("./projects/projects.json")
+        .then(response => response.json())
+        .then(projects => {
+            projectsList.innerHTML = "";
+
+            // sort projects from newest to oldest
+            projects.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // load projects in projects list
+            projects.forEach(project => {
+                appendProjectTile(project.name, project.date, project.path);
+            });
+        })
+        .catch(error => {
+            projectsList.innerText = "ERROR LOADING PROJECTS :(";
+            console.error(error);
+        });
+}
+
+function appendProjectTile(name, date, projectPage) {
+    const projectsList = document.getElementById("projectsList");
+
+    const tile = document.createElement("div");
+    tile.innerText = name.concat(" - ", date);
+    tile.onclick = () => loadProjectPage(projectPage);
+
+    projectsList.appendChild(tile);
+}
+
+function loadProjectPage(projectPage) {
+    fetch(projectPage)
+        .then(response => response.text())
+        .then(project => {
+            contentDiv.innerHTML = "<button onclick='loadContent(`projects`)'>Back</button><hr>";
+            contentDiv.innerHTML += project;
+        })
+        .catch(error => alert("Couldn't load project page for the following reason:".concat(error)));
 }
 
 function loadAboutPage() {
