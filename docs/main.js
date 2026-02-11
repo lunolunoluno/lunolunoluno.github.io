@@ -6,6 +6,7 @@ const pages = new Map([
 ]);
 const defaultPage = pages.keys().next().value;
 const contentDiv = document.getElementById("content");
+const subPageDivider = '#';
 
 window.onload = function () {
     // generate menu bar
@@ -27,7 +28,9 @@ window.addEventListener("hashchange", loadContentFromHash);
 function loadContentFromHash() {
     contentDiv.innerHTML = ""; // remove old content
 
-    let pageKey = location.hash.slice(1);
+    let pageKey = location.hash.slice(1); // remove '#' character in the beginning
+    pageKey = pageKey.split(subPageDivider)[0]; // remove everything after the sub page divider
+    console.log(location.hash.slice(1).split(subPageDivider).length);
     if (!location.hash || !pages.has(pageKey)) {
         location.hash = defaultPage;
         pageKey = defaultPage;
@@ -36,7 +39,7 @@ function loadContentFromHash() {
     loadContent(pageKey);
 }
 
-function loadContent(pageKey){
+function loadContent(pageKey) {
     fetch("./".concat(pageKey, ".html"))
         .then(response => response.text())
         .then(html => {
@@ -55,14 +58,20 @@ function loadProjectsPage() {
         .then(response => response.json())
         .then(projects => {
             projectsList.innerHTML = "";
+            const hasASubPage = location.hash.slice(1).split(subPageDivider).length > 1;
+            const foundProject = projects.find(project => project.name === location.hash.slice(1).split(subPageDivider)[1]);
+            if (hasASubPage && foundProject) { // load specific project
+                console.log(foundProject);
+                loadProjectPage(foundProject.name, foundProject.path);
+            } else { // show the list of projects
+                // sort projects from newest to oldest
+                projects.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            // sort projects from newest to oldest
-            projects.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            // load projects in projects list
-            projects.forEach(project => {
-                appendProjectTile(project.name, project.date, project.path);
-            });
+                // load projects in projects list
+                projects.forEach(project => {
+                    appendProjectTile(project.name, project.date, project.path);
+                });
+            }
         })
         .catch(error => {
             projectsList.innerText = "ERROR LOADING PROJECTS :(";
@@ -75,17 +84,17 @@ function appendProjectTile(name, date, projectPage) {
 
     const tile = document.createElement("div");
     tile.innerText = name.concat(" - ", date);
-    tile.onclick = () => loadProjectPage(projectPage);
+    tile.onclick = () => loadProjectPage(name, projectPage);
 
     projectsList.appendChild(tile);
 }
 
-function loadProjectPage(projectPage) {
+function loadProjectPage(projectName, projectPage) {
     fetch(projectPage)
         .then(response => response.text())
         .then(project => {
-            contentDiv.innerHTML = "<button onclick='loadContent(`projects`)'>Back</button><hr>";
-            contentDiv.innerHTML += project;
+            history.pushState(null, null, location.hash.concat("#", projectName)); // update the hash without triggering the hashchange event
+            contentDiv.innerHTML = project;
         })
         .catch(error => alert("Couldn't load project page for the following reason:".concat(error)));
 }
