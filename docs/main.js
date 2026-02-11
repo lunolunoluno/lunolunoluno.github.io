@@ -69,7 +69,12 @@ function loadProjectsPage() {
 
                 // load projects in projects list
                 projects.forEach(project => {
-                    appendProjectTile(project.name, project.date, project.path);
+                    // create a tile for each project
+                    const tile = document.createElement("div");
+                    tile.innerText = project.name.concat(" - ", project.date);
+                    tile.onclick = () => loadProjectPage(project.name, project.path);
+
+                    projectsList.appendChild(tile);
                 });
             }
         })
@@ -77,16 +82,6 @@ function loadProjectsPage() {
             projectsList.innerText = "ERROR LOADING PROJECTS :(";
             console.error(error);
         });
-}
-
-function appendProjectTile(name, date, projectPage) {
-    const projectsList = document.getElementById("projectsList");
-
-    const tile = document.createElement("div");
-    tile.innerText = name.concat(" - ", date);
-    tile.onclick = () => loadProjectPage(name, projectPage);
-
-    projectsList.appendChild(tile);
 }
 
 function loadProjectPage(projectName, projectPage) {
