@@ -1,1 +1,115 @@
-/*It's empty here :(*/
+:root {
+    --color-1: #BF4646;
+    --color-2: #7EACB5;
+    --bg-color-1: #EDDCC6;
+    --bg-color-2: #FFF4EA;
+    --font-color: black;
+    --font-neg-color: var(--bg-color-2);
+
+    --border-radius: 6px;
+    --gap: max(2vh, 0.5vw);
+}
+
+html {
+    font-family: sans-serif;
+    background-color: var(--color-1);
+    color: var(--font-color);
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    padding: var(--gap);
+    margin: 0;
+}
+
+header {
+    margin: 0;
+    text-align: center;
+    background-color: var(--bg-color-1);
+    border-radius: var(--border-radius);
+}
+
+#menuBar {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#menuBar li {
+    /* Tries to take as much space as possible */
+    flex-grow: 1;
+    /* Forces the width to start at 0, ignoring text length.
+       This makes the 50/50 split mathematically perfect. */
+    flex-basis: 0;
+}
+
+#menuBar a {
+    /* remove default link look */
+    text-decoration: none;
+    color: inherit;
+
+    text-transform: uppercase;
+    display: block;
+    padding: 3% 0;
+
+    border-radius: var(--border-radius);
+}
+
+#menuBar a:hover {
+    background-color: var(--color-2);
+    color: var(--font-neg-color);
+}
+
+#content {
+    flex-grow: 1;
+    margin: 0;
+    padding: var(--gap);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-color-1);
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    text-transform: uppercase;
+}
+
+#projectsList {
+    flex-grow: 1;
+
+    border-radius: var(--border-radius);
+    background-color: var(--bg-color-2);
+    padding: var(--gap);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    gap: var(--gap);
+}
+
+#projectsList div {
+    padding: var(--gap);
+    border-radius: var(--border-radius);
+    color: var(--font-neg-color);
+    background-color: var(--color-2);
+    --tile-size: min(15vw, 15vh);
+    height: var(--tile-size);
+    width: var(--tile-size);
+
+    overflow: hidden;
+}
+
+#projectsList div:hover {
+    background-color: var(--color-1);
+}
+
+p.section {
+    border-radius: var(--border-radius);
+    background-color: var(--bg-color-2);
+    padding: var(--gap);
+}

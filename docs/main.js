@@ -30,7 +30,7 @@ function loadContentFromHash() {
 
     let pageKey = location.hash.slice(1); // remove '#' character in the beginning
     pageKey = pageKey.split(subPageDivider)[0]; // remove everything after the sub page divider
-    console.log(location.hash.slice(1).split(subPageDivider).length);
+
     if (!location.hash || !pages.has(pageKey)) {
         location.hash = defaultPage;
         pageKey = defaultPage;
